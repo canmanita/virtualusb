@@ -13,6 +13,7 @@ done
 for file in vhserver.service 70-vhserver.rules config.json; do tr -d '\r' < "$HERE/$file" > "$STAGE/$NAME/$file"; done
 tr -d '\r' < "$HERE/install-generic.sh" > "$STAGE/$NAME/install.sh"; chmod 0755 "$STAGE/$NAME/install.sh"
 install -m 0644 "$ROOT/docs/LINUX-INSTALL.md" "$STAGE/$NAME/README.md"
+install -m 0644 "$ROOT/LICENSE" "$STAGE/$NAME/LICENSE"
 for doc in RASPBERRY-PI.md SECURITY.md config.example.json; do
     install -m 0644 "$ROOT/docs/$doc" "$STAGE/$NAME/$doc"
 done

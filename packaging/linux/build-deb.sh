@@ -33,6 +33,7 @@ tr -d '\r' < "$HERE/70-vhserver.rules" > "$STAGE/lib/udev/rules.d/70-vhserver.ru
 tr -d '\r' < "$HERE/ufw-vhserver" > "$STAGE/etc/ufw/applications.d/vhserver"
 tr -d '\r' < "$HERE/config.json" > "$STAGE/etc/vhserver/config.json"
 install -m 0644 "$ROOT/README.md" "$STAGE/usr/share/doc/vhserver/README.md"
+install -m 0644 "$ROOT/LICENSE" "$STAGE/usr/share/doc/vhserver/LICENSE"
 for doc in LINUX-INSTALL.md RASPBERRY-PI.md SECURITY.md config.example.json; do
     install -m 0644 "$ROOT/docs/$doc" "$STAGE/usr/share/doc/vhserver/$doc"
 done

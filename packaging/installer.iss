@@ -18,6 +18,7 @@ ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 OutputDir=..\dist
 OutputBaseFilename=VHServer-Setup-{#AppVersion}
+LicenseFile=..\LICENSE
 Compression=lzma2
 SolidCompression=yes
 DisableProgramGroupPage=yes
