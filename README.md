@@ -110,3 +110,7 @@ python -m pytest tests --cov=vhserver
 Layout: `wire.py` (framing, LZ4), `protocol.py` (payload layouts), `server.py` (asyncio server),
 `libusb_backend.py` / `fakedisk.py` (USB backends), `discovery.py` (mDNS). Backends implement `UsbBackend` in
 `backend.py`; transfers are blocking calls returning `(status, data)` with negative errno on failure.
+
+## License
+
+[MIT](LICENSE).

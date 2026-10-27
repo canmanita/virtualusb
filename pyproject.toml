@@ -7,6 +7,7 @@ name = "vhserver"
 version = "0.1.0"
 description = "VirtualUSB: independent USB-over-network server (clean-room implementation of an observed wire protocol)"
 readme = "README.md"
+license = "MIT"
 requires-python = ">=3.11"
 dependencies = ["libusb1>=3.0", "zeroconf>=0.130"]
 
