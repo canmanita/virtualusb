@@ -1,0 +1,4 @@
+[VHServer]
+title=VirtualUSB server
+description=Shares USB devices over the local network
+ports=7575/tcp|7574/tcp|5353/udp

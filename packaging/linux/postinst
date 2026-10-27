@@ -1,0 +1,61 @@
+#!/bin/sh
+set -e
+
+# TCP port the server will use: "port" from the configuration, 7575 by default.
+configured_port() {
+    python3 -c "import json; print(json.load(open('/etc/vhserver/config.json')).get('port', 7575))" 2>/dev/null || echo 7575
+}
+
+port_busy() {
+    command -v ss >/dev/null 2>&1 && ss -ltn "sport = :$1" 2>/dev/null | grep -q LISTEN
+}
+
+case "$1" in
+configure)
+    if getent passwd vhserver >/dev/null; then
+        if [ "$(id -u vhserver)" -ge 1000 ]; then
+            echo "vhserver: an ordinary account named vhserver already exists; remove or rename it first" >&2
+            exit 1
+        fi
+    else
+        adduser --system --group --no-create-home --home /nonexistent --shell /usr/sbin/nologin \
+                --gecos "VHServer" vhserver
+    fi
+    chgrp vhserver /etc/vhserver/config.json 2>/dev/null && chmod 0640 /etc/vhserver/config.json || true
+    if command -v udevadm >/dev/null 2>&1; then
+        udevadm control --reload-rules || true
+        udevadm trigger --subsystem-match=usb --action=change || true
+    fi
+    python3 -m compileall -q /usr/lib/vhserver >/dev/null 2>&1 || true
+    if ! python3 -c "import usb1, zeroconf, ifaddr" >/dev/null 2>&1; then
+        echo "vhserver: warning: python3-usb1, python3-zeroconf and python3-ifaddr must be installed" >&2
+    fi
+
+    if [ -d /run/systemd/system ]; then
+        systemctl daemon-reload || true
+        systemctl enable vhserver.service || true
+        PORT="$(configured_port)"
+        if systemctl is-active --quiet vhserver.service; then
+            systemctl restart vhserver.service || true          # upgrade: our own service holds the port
+        elif port_busy "$PORT"; then
+            # Typically another USB-over-network server on the same machine. Starting would only fail to bind.
+            echo "vhserver: TCP port $PORT is already in use, so the service was enabled but NOT started." >&2
+            if pgrep -f vhusbd >/dev/null 2>&1; then
+                echo "vhserver: another USB-over-network server (vhusbd*) is running on this machine." >&2
+                echo "vhserver: do not share the same devices with both: see /usr/share/doc/vhserver/RASPBERRY-PI.md" >&2
+            fi
+            echo "vhserver: choose another port in /etc/vhserver/config.json (\"port\": 7600), then: sudo systemctl start vhserver" >&2
+        else
+            systemctl start vhserver.service || true
+        fi
+    fi
+
+    if command -v ufw >/dev/null 2>&1 && ufw status 2>/dev/null | grep -q "^Status: active"; then
+        echo "vhserver: ufw is active. Allow your local network with:" >&2
+        echo "  sudo ufw allow from 192.168.0.0/16 to any app VHServer" >&2
+        echo "(adjust the network: 10.0.0.0/8, 172.16.0.0/12, 100.64.0.0/10 for Tailscale)" >&2
+    fi
+    echo "vhserver: installed. Check it with: sudo vhserver doctor" >&2
+    ;;
+esac
+exit 0

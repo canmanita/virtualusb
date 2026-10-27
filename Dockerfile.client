@@ -1,0 +1,6 @@
+# Minimal Linux attack-client image: pure Python, speaks the wire protocol directly, no libusb needed.
+FROM python:3.11-slim
+WORKDIR /app
+COPY vhserver ./vhserver
+COPY scripts ./scripts
+ENTRYPOINT ["python3", "-I", "scripts/attack_client.py"]

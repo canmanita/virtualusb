@@ -1,0 +1,42 @@
+[Unit]
+Description=VirtualUSB server
+Documentation=file:///usr/share/doc/vhserver/README.md
+Wants=network-online.target
+After=network-online.target
+# a port that stays busy (for example another USB-over-network server) must not make systemd retry forever
+StartLimitIntervalSec=120
+StartLimitBurst=5
+
+[Service]
+Type=simple
+User=vhserver
+Group=vhserver
+ExecStart=/usr/bin/vhserver run
+Restart=on-failure
+RestartSec=5
+# nicknames are the only thing the service writes: /var/lib/vhserver, owned by the service user
+StateDirectory=vhserver
+StateDirectoryMode=0700
+
+# Access to USB comes from the udev ACL (70-vhserver.rules), not from privileges.
+NoNewPrivileges=yes
+CapabilityBoundingSet=
+AmbientCapabilities=
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+LockPersonality=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+RestrictNamespaces=yes
+ProtectClock=yes
+ProtectHostname=yes
+SystemCallArchitectures=native
+UMask=0077
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6 AF_NETLINK
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,16 @@
+[Unit]
+Description=VirtualUSB server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/vhserver
+ExecStart=/usr/bin/python3 -m vhserver --name %H
+Restart=on-failure
+RestartSec=3
+# needs access to the USB bus; running as root is the simplest option
+User=root
+
+[Install]
+WantedBy=multi-user.target

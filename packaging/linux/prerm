@@ -1,0 +1,14 @@
+#!/bin/sh
+set -e
+case "$1" in
+remove|upgrade|deconfigure)
+    if [ -d /run/systemd/system ]; then
+        if [ "$1" = "remove" ]; then
+            systemctl disable --now vhserver.service || true
+        else
+            systemctl stop vhserver.service || true
+        fi
+    fi
+    ;;
+esac
+exit 0

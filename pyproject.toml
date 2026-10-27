@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vhserver"
+version = "0.1.0"
+description = "VirtualUSB: independent USB-over-network server (clean-room implementation of an observed wire protocol)"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = ["libusb1>=3.0", "zeroconf>=0.130"]
+
+[project.optional-dependencies]
+fast = ["lz4>=4.0"]
+test = ["pytest", "pytest-cov"]
+
+[project.scripts]
+vhserver = "vhserver.__main__:main"
+
+[tool.setuptools]
+packages = ["vhserver"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

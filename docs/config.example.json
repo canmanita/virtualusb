@@ -1,0 +1,13 @@
+{
+  "name": "raspberrypi",
+  "port": 7575,
+  "bind": "0.0.0.0",
+  "allow": ["192.168.1.0/24", "10.0.0.0/8", "100.64.0.0/10"],
+  "ignore": ["0529:0003"],
+  "share_hubs": false,
+  "share_input": false,
+  "mdns": true,
+  "allow_rename": true,
+  "ssl_port": 7574,
+  "allow_plaintext": true
+}

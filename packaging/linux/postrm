@@ -1,0 +1,23 @@
+#!/bin/sh
+set -e
+case "$1" in
+remove|purge)
+    if [ -d /run/systemd/system ]; then
+        systemctl daemon-reload || true
+    fi
+    if command -v udevadm >/dev/null 2>&1; then
+        udevadm control --reload-rules || true
+    fi
+    rm -rf /usr/lib/vhserver  # byte-compiled caches written by postinst
+    # the udev rule is gone: drop the ACL entries it added to the device nodes that are still plugged in
+    if command -v setfacl >/dev/null 2>&1; then
+        for node in /dev/bus/usb/*/*; do
+            [ -e "$node" ] && setfacl -x u:vhserver "$node" 2>/dev/null || true
+        done
+    fi
+    ;;
+esac
+if [ "$1" = "purge" ]; then
+    rm -rf /etc/vhserver /var/lib/vhserver
+fi
+exit 0
